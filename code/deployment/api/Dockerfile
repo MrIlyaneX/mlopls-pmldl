@@ -1,27 +1,31 @@
-# Install uv
-FROM python:3.11-slim AS builder
+# syntax=docker/dockerfile:1
+
+ARG PYTHON_VERSION=3.11
+FROM python:${PYTHON_VERSION}-slim as base
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
 
-# Change the working directory to the `app` directory
-WORKDIR /app
+# Prevents Python from writing pyc files.
+ENV PYTHONDONTWRITEBYTECODE=1
 
-# Install dependencies
-RUN --mount=type=cache,target=/root/.cache/uv \
-    --mount=type=bind,source=uv.lock,target=uv.lock \
-    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
-    uv sync --frozen --no-install-project --no-editable
+# Keeps Python from buffering stdout and stderr to avoid situations where
+# the application crashes without emitting any logs due to buffering.
+ENV PYTHONUNBUFFERED=1
 
-# Copy the project into the intermediate image
-ADD . /app
+# WORKDIR /app
 
-# Sync the project
-RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --frozen --no-editable
+ENV UV_COMPILE_BYTECODE=1
+RUN uv venv /opt/venv
+# Use the virtual environment automatically
+ENV VIRTUAL_ENV=/opt/venv
+# Place entry points in the environment at the front of the path
+ENV PATH="/opt/venv/bin:$PATH"
 
-FROM python:3.11-slim
 
-# Copy the environment, but not the source code
-COPY --from=builder --chown=app:app /app/.venv /app/.venv
+RUN --mount=type=cache,target=/root/.cache/pip \
+    --mount=type=bind,source=./requirements.txt,target=./requirements.txt \
+    uv pip install -r ./requirements.txt
 
-# Run the application
-CMD ["/app/.venv/bin/hello"]
+COPY . .
+
+EXPOSE 8000
+ENTRYPOINT ["uvicorn", "app:app", "--host" , "0.0.0.0", "--port", "8000"]

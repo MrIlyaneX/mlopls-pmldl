@@ -1,0 +1,11 @@
+#dvc==3.55.2
+# zenml[server]
+apache-airflow==2.7.3
+apache-airflow-providers-docker
+#pendulum==2.0.0
+# mlflow
+
+# torch==2.2.2
+# numpy==1.26.4
+# onnx==1.16.2
+# onnxruntime==1.19.2
