@@ -1,15 +1,15 @@
 #dvc==3.55.2
 
-zenml[server]
-pendulum
+#zenml[server]
+#pendulum
 mlflow
-
 
 gunicorn
 uvicorn
 fastapi
 python-dotenv
-python-dotenv==1.0.1
+
+requests
 
 torch==2.2.2
 numpy==1.26.4

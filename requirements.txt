@@ -1,5 +1,6 @@
 #dvc==3.55.2
-zenml[server]
+zenml[server]==0.66.0
+email-validator==2.2.0
 apache-airflow
 apache-airflow-providers-docker
 pendulum
@@ -10,7 +11,7 @@ uvicorn
 fastapi
 python-dotenv
 streamlit==1.38.0
-
+tqdm
 
 pandas==2.2.2
 matplotlib==3.9.2

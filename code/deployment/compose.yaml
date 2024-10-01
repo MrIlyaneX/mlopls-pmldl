@@ -4,14 +4,15 @@ services:
     build:
       context: ./api
     ports:
-      - 8000:8000
-    volumes:
-      - ./models:/models
+      - 8088:8088
     environment:
-      - MODELS_NAME=best.pt
-      - MODEL_VERSION=1
+      - MODELS_NAME=basic_model
+      - MODEL_ALIAS=production
+      - MLFLOW_URL=http://mlflow-container:8080
     networks:
       - interserver
+    depends_on:
+      - mlflow
 
   streamlit:
     container_name: webapp-container
@@ -20,11 +21,21 @@ services:
     ports:
       - 8501:8501
     environment:
-      - FASTAPI_URL=http://api-container:8000/main
+      - FASTAPI_URL=http://fastapi:8088/main
     depends_on:
       - fastapi
     networks:
       - interserver
+
+  mlflow:
+    container_name: mlflow-container
+    build:
+      context: ./mlflow_api
+    ports:
+      - 8080:8080
+    networks:
+      - interserver
+    
 
 networks:
   interserver:

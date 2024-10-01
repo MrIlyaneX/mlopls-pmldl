@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "mloplspmldl"
+name = "mlops_pmldl"
 version = "0.1.0"
 description = "A brief description of your project"
 authors = ["Ilia Mistiurin"]
@@ -9,9 +9,9 @@ package-mode = false
 
 [tool.poetry.dependencies]
 python = "3.11.9"
-zenml = { version = "*", extras = ["server"] }
-apache-airflow = "*"
-apache-airflow-providers-docker = "*"
+zenml = { version = "0.66.0", extras = ["server"] }
+# apache-airflow = "*"
+# apache-airflow-providers-docker = "*"
 pendulum = "2.0.0"
 mlflow = "*"
 gunicorn = "*"
@@ -27,6 +27,7 @@ numpy = "1.26.4"
 jupyter = "1.1.1"
 poetry = "1.8.3"
 psycopg2-binary = "*"
+tqdm = "*"
 
 [tool.poetry.dev-dependencies]
 jupyter = "^1.0.0"
