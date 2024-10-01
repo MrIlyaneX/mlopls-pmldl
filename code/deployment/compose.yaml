@@ -4,7 +4,7 @@ services:
     build:
       context: ./api
     ports:
-      - 8088:8088
+      - 8501:8000
     environment:
       - MODELS_NAME=basic_model
       - MODEL_ALIAS=production
@@ -19,9 +19,9 @@ services:
     build:
       context: ./app
     ports:
-      - 8501:8501
+      - 8500:8501
     environment:
-      - FASTAPI_URL=http://fastapi:8088/main
+      - FASTAPI_URL=http://fastapi:8000/main
     depends_on:
       - fastapi
     networks:
@@ -32,7 +32,7 @@ services:
     build:
       context: ./mlflow_api
     ports:
-      - 8080:8080
+      - 8502:8080
     networks:
       - interserver
     
