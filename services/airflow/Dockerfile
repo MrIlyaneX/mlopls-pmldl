@@ -39,7 +39,10 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# EXPOSE 8080
+ RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 # Zenml Env
 RUN python3 -m venv /opt/services/zenml/venv
@@ -47,8 +50,6 @@ RUN python3 -m venv /opt/services/zenml/venv
 RUN --mount=type=cache,target=/root/.cache/pip \
     --mount=type=bind,source=./zens.txt,target=./zens.txt \
     /opt/services/zenml/venv/bin/pip install --no-user -r ./zens.txt
-
-#ENV PATH="/opt/services/zenml/venv/bin:$PATH"
 
 # Switch to regular user airflow
 USER airflow

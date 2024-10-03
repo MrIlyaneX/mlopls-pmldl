@@ -209,15 +209,15 @@ def mlflow_training(
             },
         )
 
-        results = mlflow.evaluate(
-            model=model_with_inference,
-            data=val_loader,
-            target=val_target,
-            metrics=["accuracy", "f1_score", "roc_auc"],
-            model_type="pyfunc",
-        )
+        # results = mlflow.evaluate(
+        #     model=model_with_inference,
+        #     data=val_loader,
+        #     targets=val_target,
+        #     metrics=["accuracy", "f1_score", "roc_auc"],
+        #     model_type="pyfunc",
+        # )
 
-        mlflow.log_metrics(results)
+        # mlflow.log_metrics(results)
 
         client = mlflow.MlflowClient(registry_uri=registry_uri)
         client.set_registered_model_alias(

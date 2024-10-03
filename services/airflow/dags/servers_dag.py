@@ -15,7 +15,7 @@ with DAG(
     "run_local_zenml",
     default_args=default_args,
     description="Run ZenML pipeline",
-    schedule_interval=None,
+    schedule_interval='*/5 * * * *',
     catchup=False,
     tags=["tests"],
 ) as run_local_zenml:
@@ -41,7 +41,12 @@ with DAG(
         """,
     )
 
-    run_pipe
+    trigger_training = TriggerDagRunOperator(
+        task_id="trigger_training",
+        trigger_dag_id="run_training",
+    )
+
+    run_pipe >> trigger_training
 
 
 with DAG(
@@ -58,7 +63,17 @@ with DAG(
         dag=docker_compose_deploy_up,
     )
 
-    docker_compose_up
+    wait_for_10_minutes = BashOperator(
+        task_id="wait_for_minutes",
+        bash_command="sleep 150",
+    )
+
+    trigger_deploy_down = TriggerDagRunOperator(
+        task_id="trigger_deploy_down",
+        trigger_dag_id="docker_compose_deploy_down",
+    )
+
+    docker_compose_up >> wait_for_10_minutes >> trigger_deploy_down
 
 with DAG(
     "docker_compose_deploy_down",
@@ -79,61 +94,48 @@ with DAG(
 with DAG(
     "run_training",
     default_args=default_args,
-    description="Run training with MLflow and build model container for deployment",
+    description="Run training with MLflow",
     schedule_interval=None,
     catchup=False,
     tags=["tests"],
 ) as run_training:
-    train = BashOperator(
+    training = BashOperator(
         task_id="run_training",
         bash_command="""
-            bash /opt/code/models/init.sh && \
-            cd /opt/code/models && \
-            docker build -t mls mlflow_api
+            set -e; \
+            bash /opt/code/models/init.sh
             """,
         dag=run_training,
     )
-    train
+    trigger_packing = TriggerDagRunOperator(
+        task_id="trigger_packing",
+        trigger_dag_id="run_packing",
+    )
 
+    training >> trigger_packing
 
 with DAG(
-    "master_dag",
+    "run_packing",
     default_args=default_args,
-    description="Master DAG",
-    schedule_interval="*/5 * * * *",
+    description="Build model container for deployment",
+    schedule_interval=None,
     catchup=False,
     tags=["tests"],
-) as master_dag:
-    trigger_run_local_zenml = TriggerDagRunOperator(
-        task_id="trigger_run_local_zenml",
-        trigger_dag_id="run_local_zenml",
+) as run_packing:
+    packing = BashOperator(
+        task_id="run_packing",
+        bash_command="""
+            set -e; \
+            cd /opt/code/models && \
+            apt-get update && apt-get install -y gcc && \
+            docker build -t mls mlflow_api && \
+            exit 1
+            """,
+        dag=run_packing,
     )
-
-    trigger_docker_compose_deploy_up = TriggerDagRunOperator(
-        task_id="trigger_docker_compose_deploy_up",
-        trigger_dag_id="run_training",
-    )
-
-    trigger_docker_compose_deploy_down = TriggerDagRunOperator(
-        task_id="trigger_docker_compose_deploy_down",
+    trigger_deploy_up = TriggerDagRunOperator(
+        task_id="trigger_deploy_up",
         trigger_dag_id="docker_compose_deploy_up",
     )
 
-    trigger_run_training = TriggerDagRunOperator(
-        task_id="trigger_run_training",
-        trigger_dag_id="docker_compose_deploy_down",
-    )
-
-    wait_timer_task = PythonOperator(
-        task_id="waiting",
-        python_callable=lambda: sleep(300),
-        dag=master_dag,
-    )
-
-    (
-        trigger_run_local_zenml
-        >> trigger_run_training
-        >> trigger_docker_compose_deploy_up
-        >> wait_timer_task
-        >> trigger_docker_compose_deploy_down
-    )
+    packing >> trigger_deploy_up
