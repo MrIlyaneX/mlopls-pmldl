@@ -1,0 +1,12 @@
+apache-airflow==2.7.3
+apache-airflow-providers-docker
+mlflow==2.16.2
+tqdm
+pandas==2.2.2
+matplotlib==3.9.2
+seaborn==0.13.2
+torch==2.2.2
+numpy==1.26.4
+scikit-learn==1.5.2
+gevent
+psycopg2-binary

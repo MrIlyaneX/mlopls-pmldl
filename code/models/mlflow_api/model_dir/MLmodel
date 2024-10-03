@@ -1,0 +1,59 @@
+artifact_path: models
+flavors:
+  python_function:
+    artifacts:
+      encoder_folder:
+        path: artifacts/encoders
+        uri: ./encoders
+      model_file:
+        path: artifacts/BasicModel.pt
+        uri: ./BasicModel.pt
+    cloudpickle_version: 3.0.0
+    code: code
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.pyfunc.loaders.code_model
+    model_code_path: /opt/code/models/inference.py
+    python_version: 3.11.9
+    streamable: false
+mlflow_version: 2.16.2
+model_size_bytes: 2706822
+model_uuid: 0913680c42ff4f809b086aaaf3c284f6
+run_id: 6bca645483d1452b9279f37220c72848
+signature:
+  inputs: '[{"type": "long", "name": "Marital status", "required": true}, {"type":
+    "long", "name": "Application mode", "required": true}, {"type": "long", "name":
+    "Application order", "required": true}, {"type": "long", "name": "Course", "required":
+    true}, {"type": "long", "name": "Daytime/evening attendance", "required": true},
+    {"type": "long", "name": "Previous qualification", "required": true}, {"type":
+    "double", "name": "Previous qualification (grade)", "required": true}, {"type":
+    "long", "name": "Nacionality", "required": true}, {"type": "long", "name": "Mother''s
+    qualification", "required": true}, {"type": "long", "name": "Father''s qualification",
+    "required": true}, {"type": "long", "name": "Mother''s occupation", "required":
+    true}, {"type": "long", "name": "Father''s occupation", "required": true}, {"type":
+    "double", "name": "Admission grade", "required": true}, {"type": "long", "name":
+    "Displaced", "required": true}, {"type": "long", "name": "Educational special
+    needs", "required": true}, {"type": "long", "name": "Debtor", "required": true},
+    {"type": "long", "name": "Tuition fees up to date", "required": true}, {"type":
+    "long", "name": "Gender", "required": true}, {"type": "long", "name": "Scholarship
+    holder", "required": true}, {"type": "long", "name": "Age at enrollment", "required":
+    true}, {"type": "long", "name": "International", "required": true}, {"type": "long",
+    "name": "Curricular units 1st sem (credited)", "required": true}, {"type": "long",
+    "name": "Curricular units 1st sem (enrolled)", "required": true}, {"type": "long",
+    "name": "Curricular units 1st sem (evaluations)", "required": true}, {"type":
+    "long", "name": "Curricular units 1st sem (approved)", "required": true}, {"type":
+    "double", "name": "Curricular units 1st sem (grade)", "required": true}, {"type":
+    "long", "name": "Curricular units 1st sem (without evaluations)", "required":
+    true}, {"type": "long", "name": "Curricular units 2nd sem (credited)", "required":
+    true}, {"type": "long", "name": "Curricular units 2nd sem (enrolled)", "required":
+    true}, {"type": "long", "name": "Curricular units 2nd sem (evaluations)", "required":
+    true}, {"type": "long", "name": "Curricular units 2nd sem (approved)", "required":
+    true}, {"type": "double", "name": "Curricular units 2nd sem (grade)", "required":
+    true}, {"type": "long", "name": "Curricular units 2nd sem (without evaluations)",
+    "required": true}, {"type": "double", "name": "Unemployment rate", "required":
+    true}, {"type": "double", "name": "Inflation rate", "required": true}, {"type":
+    "double", "name": "GDP", "required": true}]'
+  outputs: '[{"type": "tensor", "tensor-spec": {"dtype": "object", "shape": [-1]}}]'
+  params: null
+utc_time_created: '2024-10-03 17:48:12.630533'

@@ -1,0 +1,44 @@
+services:
+  fastapi:
+    container_name: api-container
+    build:
+      context: ./api
+    ports:
+      - 8501:8000
+    environment:
+      - MODELS_NAME=BasicModel
+      - MODEL_ALIAS=Champion
+      - MLFLOW_URL=http://mlflow-container:8080
+    networks:
+      - interserver
+    depends_on:
+      - mlflow
+    restart: on-failure
+
+  streamlit:
+    container_name: webapp-container
+    build:
+      context: ./app
+    ports:
+      - 8500:8501
+    environment:
+      - FASTAPI_URL=http://fastapi:8000/main
+    depends_on:
+      - fastapi
+    networks:
+      - interserver
+    restart: on-failure
+
+  mlflow:
+    container_name: mlflow-container
+    image: mls
+    ports:
+      - 8502:8080
+    networks:
+      - interserver
+    restart: on-failure
+    
+
+networks:
+  interserver:
+    driver: bridge

@@ -25,5 +25,5 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 
 COPY . .
 
-EXPOSE 8000
+EXPOSE 8500
 ENTRYPOINT ["streamlit", "run", "app.py"]

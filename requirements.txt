@@ -1,9 +1,31 @@
-dvc==3.55.2
-fastapi[standard]
+#dvc==3.55.2
+zenml[server]==0.66.0
+email-validator==2.2.0
+apache-airflow
+apache-airflow-providers-docker
+pendulum
+mlflow
 
+gunicorn
+uvicorn
+fastapi
+python-dotenv
 streamlit==1.38.0
+tqdm
 
-numpy==2.1.1
 pandas==2.2.2
 matplotlib==3.9.2
 seaborn==0.13.2
+
+torch==2.2.2
+numpy==1.26.4
+
+jupyter==1.1.1
+
+poetry==1.8.3
+psycopg2-binary
+scikit-learn==1.5.2
+
+
+# onnx==1.16.2
+# onnxruntime==1.19.2
