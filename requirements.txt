@@ -24,6 +24,8 @@ jupyter==1.1.1
 
 poetry==1.8.3
 psycopg2-binary
+scikit-learn==1.5.2
+
 
 # onnx==1.16.2
 # onnxruntime==1.19.2

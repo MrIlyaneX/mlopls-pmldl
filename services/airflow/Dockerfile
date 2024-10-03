@@ -30,6 +30,14 @@ RUN apt-get update \
 
 # EXPOSE 8080
 
+RUN python3 -m venv /opt/services/zenml/venv
+
+RUN --mount=type=cache,target=/root/.cache/pip \
+    --mount=type=bind,source=./zens.txt,target=./zens.txt \
+    /opt/services/zenml/venv/bin/pip install --no-user -r ./zens.txt
+
+ENV PATH="/opt/services/zenml/venv/bin:$PATH"
+
 # Switch to regular user airflow
 USER airflow
 

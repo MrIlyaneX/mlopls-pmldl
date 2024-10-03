@@ -1,0 +1,12 @@
+services:
+  training-mlflow:
+    container_name: training-container
+    build:
+      context: .
+    volumes:
+      - ../../data:/opt/data
+      - ../../mlartifacts:/opt/mlartifacts
+      - ../../mlruns:/opt/mlruns
+    ports:
+      - 8509:8090
+    restart: on-failure

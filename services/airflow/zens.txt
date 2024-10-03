@@ -1,0 +1,11 @@
+zenml[server]==0.66.0
+email-validator==2.2.0
+python-dotenv
+tqdm
+pyarrow==10.0.1
+pandas==2.2.2
+scikit-learn==1.5.2
+#torch==2.2.2
+numpy==1.26.4
+poetry==1.8.3
+psycopg2-binary

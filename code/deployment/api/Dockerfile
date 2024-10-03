@@ -27,5 +27,5 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 
 COPY . /app
 
-EXPOSE 8088
-ENTRYPOINT ["uvicorn", "app:app", "--host" , "0.0.0.0", "--port", "8088"]
+EXPOSE 8000
+ENTRYPOINT ["uvicorn", "app:app", "--host" , "0.0.0.0", "--port", "8000"]

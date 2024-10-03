@@ -7,7 +7,6 @@ from airflow.operators.python import PythonOperator
 
 from airflow.utils.dates import days_ago
 
-
 from airflow.providers.docker.operators.docker import DockerOperator
 
 default_args = {
@@ -15,48 +14,35 @@ default_args = {
     "start_date": days_ago(1),
 }
 
-with DAG(
-    "ls_directory",
-    default_args=default_args,
-    schedule_interval="@once",
-    tags=["tests"],
-) as dag:
-    BashOperator(
-        task_id="1",
-        bash_command="ls -la /opt",
-    )
-
-    BashOperator(
-        task_id="2",
-        bash_command="ls -la /opt/deployment",
-    )
-
-    BashOperator(
-        task_id="3",
-        bash_command="ls -la /opt/deployment/api",
-    )
-
-    BashOperator(
-        task_id="4",
-        bash_command="ls -la /opt/deployment/app",
-    )
 
 with DAG(
-    "zenml_pipeline_docker",
+    "run_local_zenml",
     default_args=default_args,
-    description="Run ZenML pipeline using DockerOperator",
-    schedule_interval=None,
+    description="Run ZenML pipeline",
+    schedule_interval="*/5 * * * *",
     catchup=False,
     tags=["tests"],
 ) as dag:
-    run_zenml_pipeline = DockerOperator(
-        task_id="run_zenml_pipeline",
-        image="your_zenml_image:latest",  # Custom Docker image with ZenML installed
-        command="zenml pipeline run <pipeline_name>",
-        docker_url="unix://var/run/docker.sock",
-        network_mode="bridge",
-        auto_remove=True,
-        dag=dag,
+    run_pipe = BashOperator(
+        task_id="run_pipeline",
+        bash_command="""
+            if ! ls /opt/data | grep -q processed; then \
+                mkdir /opt/data/processed; \
+            fi && \
+            source /opt/services/zenml/venv/bin/activate && \
+            cd /opt/services/zenml && \
+            zenml init && \
+            zenml down && \
+            zenml up && \
+            if ! zenml artifact-store list | grep -q artifacts; then \
+                zenml artifact-store register artifacts --flavor=local; \
+            fi && \
+            if ! zenml stack list | grep -q dev_stack; then \
+                zenml stack register dev_stack -o default -a artifacts; \
+            fi && \
+            zenml stack set dev_stack && \
+            python /opt/services/zenml/pipelines/training_pipeline.py -training_pipeline
+        """,
     )
 
-    run_zenml_pipeline
+    run_pipe
