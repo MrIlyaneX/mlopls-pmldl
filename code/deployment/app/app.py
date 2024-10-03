@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 
 
 load_dotenv()
-FASTAPI_URL = os.getenv("FASTAPI_URL")
+FASTAPI_URL = os.getenv("FASTAPI_URL", "http://fastapi:8000/main")
 
 
 def create_input_fields(model):
@@ -284,6 +284,7 @@ def main():
             StudentDataModel(**inputs)
             response = requests.post(FASTAPI_URL, json=inputs)
             prediction = response.json()["prediction"]
+            st.title(prediction["predictions"][0])
         except ValidationError as e:
             st.error(f"Validation Error. Try again")
 

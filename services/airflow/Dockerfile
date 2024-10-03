@@ -16,6 +16,11 @@ RUN --mount=type=cache,target=/root/.cache/pip \
     --mount=type=bind,source=./requirements.txt,target=./requirements.txt \
     pip install -r ./requirements.txt
 
+    
+# RUN pip install mlflow==2.16.2
+# RUN export MLFLOW_TRACKING_URI=http://localhost:8090
+# RUN mlflow server -h localhost -p 8090 &
+
 # Switch to root user
 USER root
 
@@ -28,15 +33,22 @@ RUN apt-get update \
 && apt-get autoremove -y \
 && apt-get clean
 
+RUN apt-get update && apt-get install -y \
+    gcc \
+    python3-dev \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
 # EXPOSE 8080
 
+# Zenml Env
 RUN python3 -m venv /opt/services/zenml/venv
 
 RUN --mount=type=cache,target=/root/.cache/pip \
     --mount=type=bind,source=./zens.txt,target=./zens.txt \
     /opt/services/zenml/venv/bin/pip install --no-user -r ./zens.txt
 
-ENV PATH="/opt/services/zenml/venv/bin:$PATH"
+#ENV PATH="/opt/services/zenml/venv/bin:$PATH"
 
 # Switch to regular user airflow
 USER airflow

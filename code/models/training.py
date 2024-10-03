@@ -1,5 +1,5 @@
 import torch
-from torch import mode, nn
+from torch import nn
 from tqdm import tqdm
 from torch.utils.data import DataLoader, TensorDataset
 
@@ -106,9 +106,9 @@ def train(
 
 
 def mlflow_training(
-    train_file: str = "./data/processed/train_data.csv",
-    val_file: str = "./data/processed/val_data.csv",
-    test_file: str = "./data/processed/test_data.csv",
+    train_file: str = "../../data/processed/train_data.csv",
+    val_file: str = "../../data/processed/val_data.csv",
+    test_file: str = "../../data/processed/test_data.csv",
     target_name: str = "Target",
     model_name: str = "BasicModel",
     model_alias: str = "Champion",
@@ -176,7 +176,7 @@ def mlflow_training(
             device="cpu",
             epochs=epochs,
         )
-        torch.save(model.state_dict(), f"./models/{model_name}.pt")
+        torch.save(model.state_dict(), f"./{model_name}.pt")
 
         # Mlflow
         model_with_inference = ModelInferenceInterface(
@@ -195,32 +195,41 @@ def mlflow_training(
         )
         model_info = mlflow.pyfunc.log_model(
             artifact_path="models",
-            python_model="./code/models/inference.py",
+            python_model="./inference.py",
             signature=signature,
             registered_model_name=model_name,
             code_paths=[
-                "./code/models/inference.py",
-                "./code/models/model.py",
-                "./code/models/features.py",
+                "./inference.py",
+                "./model.py",
+                "./features.py",
             ],
             artifacts={
-                "model_file": f"./models/{model_name}.pt",
+                "model_file": f"./{model_name}.pt",
                 "encoder_folder": "./encoders",
             },
         )
+
+        results = mlflow.evaluate(
+            model=model_with_inference,
+            data=val_loader,
+            target=val_target,
+            metrics=["accuracy", "f1_score", "roc_auc"],
+            model_type="pyfunc",
+        )
+
+        mlflow.log_metrics(results)
 
         client = mlflow.MlflowClient(registry_uri=registry_uri)
         client.set_registered_model_alias(
             model_name, model_alias, model_info.registered_model_version
         )
-
         model = mlflow.pyfunc.load_model(f"models:/{model_name}@{model_alias}")
         print(model.predict(pd.DataFrame(train_data[0:1])))
 
 
 mlflow_training(
     registry_uri=registry_uri,
-    epochs=1,
+    epochs=5,
     categorical_cols=[
         "Marital status",
         "Application mode",

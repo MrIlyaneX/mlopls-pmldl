@@ -79,10 +79,13 @@ x-airflow-common:
     - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
     - /var/run/docker.sock:/var/run/docker.sock
     - ../../code/deployment:/opt/code/deployment
+    - ../../code/models/:/opt/code/models/
     - ../../models:/opt/models
-    - ../zenml:/opt/services/zenml
     - ../../data:/opt/data
+    - ../../mlartifacts:/opt/mlartifacts
+    - ../../mlruns:/opt/mlruns
     - zenml_venv:/opt/services/zenml/venv
+    - ../zenml:/opt/services/zenml
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
     &airflow-common-depends-on
@@ -292,7 +295,7 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
-
+        
 volumes:
   postgres-db-volume:
   code-deployment:

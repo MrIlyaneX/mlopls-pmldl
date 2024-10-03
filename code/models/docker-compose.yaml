@@ -4,9 +4,9 @@ services:
     build:
       context: .
     volumes:
-      - ../../data:/opt/data
-      - ../../mlartifacts:/opt/mlartifacts
-      - ../../mlruns:/opt/mlruns
+      - /opt/data:/opt/data
+      - ../../mlartifacts:/opt/code/models/mlartifacts
+      - ../../mlruns:/opt/code/models/mlruns
     ports:
       - 8509:8090
     restart: on-failure
